@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API_REST_EXEMPLO.Model;
+using API_REST_EXEMPLO.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_REST_EXEMPLO.Controllers
@@ -10,36 +12,59 @@ namespace API_REST_EXEMPLO.Controllers
     [ApiController]
     public class PersonsController : ControllerBase
     {
+
+        private IPersonService _personService;
+
+        public PersonsController(IPersonService personService)
+        {
+            _personService = personService;
+        }
+
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(_personService.FindAll());
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            Person person = _personService.FindById(id);
+            if (_personService.FindById(id) == null)
+            {
+                return NotFound();
+            }
+            return Ok(person);
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Person person)
         {
+            if (person == null) return BadRequest();
+            return new ObjectResult(_personService.Create(person));
+
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] Person person)
         {
+            if (person == null) return BadRequest();
+            return new ObjectResult(_personService.Update(person));
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            if (id <= 0) return BadRequest();
+            _personService.Delete(id);
+
+            //NoContent qdo não retorna nada (204 na tela)
+            return NoContent();
         }
     }
 }
