@@ -1,67 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using API_REST_EXEMPLO.Model;
+using API_REST_EXEMPLO.Model.Context;
 
 namespace API_REST_EXEMPLO.Services.Implementation
 {
     public class PersonServiceImpl : IPersonService
     {
-        private  volatile int count;
+        private SqlServerContext _context;
 
+        public PersonServiceImpl (SqlServerContext context)
+        {
+            _context = context;
+        }
+
+        //Metodo para Inserir um registro
         public Person Create(Person person)
         {
+            try
+            {
+                _context.Add(person);
+                _context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
             return person;
         }
 
+        //Metodo para remover
         public void Delete(long Id)
         {
+            try
+            {
+                var result = _context.Persons.SingleOrDefault(p => p.Id.Equals(Id));
+
+                _context.Persons.Remove(result);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
+        //Metodo para trazer todos os registros
         public List<Person> FindAll()
         {
-            List<Person> persons = new List<Person>();
-            for (int i = 0; i < 8; i++)
-            {
-                Person person = MockPerson(i);
-                persons.Add(person);
 
-            }
-            return persons;
-        }
-        private Person MockPerson(int i)
-        {
-            return new Person
-            {
-                Id = GetImcrement(),
-                FirstName = "Person " + i,
-                LastName = "Last name" + i,
-                Address = "Endereco " + i,
-                Gender = "Male"
-            };
+            return _context.Persons.ToList();
 
         }
 
-        private long GetImcrement()
-        {
-            return Interlocked.Increment(ref count);
-        }
-
+        //Metodo para recuperar um registro específico
         public Person FindById(long Id)
         {
-            return new Person
-            {
-                Id = GetImcrement(),
-                FirstName = "Jayson",
-                LastName = "Rezende",
-                Address = "Rua Paulino",
-                Gender = "Male"
-            };
+            return _context.Persons.SingleOrDefault(p => p.Id.Equals(Id));
         }
 
+        //Metodo para atualizar a tabela
         public Person Update(Person person)
         {
+            try
+            {
+
+                if (!Exist(person.Id)) return new Person();
+
+                var result = _context.Persons.SingleOrDefault(p => p.Id.Equals(person.Id));
+
+                _context.Entry(result).CurrentValues.SetValues(person);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return person;
+        }
+
+        private bool Exist(long? id)
+        {
+            return _context.Persons.Any(p => p.Id.Equals(id));
         }
     }
 }

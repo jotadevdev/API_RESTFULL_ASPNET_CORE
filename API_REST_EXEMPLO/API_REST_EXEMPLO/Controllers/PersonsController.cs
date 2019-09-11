@@ -20,14 +20,14 @@ namespace API_REST_EXEMPLO.Controllers
             _personService = personService;
         }
 
-        // GET api/values
+        // GET api/Persons
         [HttpGet]
         public IActionResult Get()
         {
             return Ok(_personService.FindAll());
         }
 
-        // GET api/values/5
+        // GET api/Persons/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -39,7 +39,7 @@ namespace API_REST_EXEMPLO.Controllers
             return Ok(person);
         }
 
-        // POST api/values
+        // POST api/Persons
         [HttpPost]
         public IActionResult Post([FromBody] Person person)
         {
@@ -48,7 +48,7 @@ namespace API_REST_EXEMPLO.Controllers
 
         }
 
-        // PUT api/values/5
+        // PUT api/Persons/5
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Person person)
         {
@@ -56,7 +56,7 @@ namespace API_REST_EXEMPLO.Controllers
             return new ObjectResult(_personService.Update(person));
         }
 
-        // DELETE api/values/5
+        // DELETE api/Persons/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
