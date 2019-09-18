@@ -5,13 +5,13 @@ using System.Threading;
 using API_REST_EXEMPLO.Model;
 using API_REST_EXEMPLO.Model.Context;
 
-namespace API_REST_EXEMPLO.Services.Implementation
+namespace API_REST_EXEMPLO.Repository.Implementation
 {
-    public class PersonServiceImpl : IPersonService
+    public class PersonRepositoryImpl : IPersonRepository
     {
         private SqlServerContext _context;
 
-        public PersonServiceImpl (SqlServerContext context)
+        public PersonRepositoryImpl(SqlServerContext context)
         {
             _context = context;
         }
@@ -23,16 +23,18 @@ namespace API_REST_EXEMPLO.Services.Implementation
             {
                 _context.Add(person);
                 _context.SaveChanges();
+
+                return person;
             }
             catch(Exception ex)
             {
                 throw ex;
             }
-            return person;
+            
         }
 
         //Metodo para remover
-        public void Delete(long Id)
+        public void Delete(int Id)
         {
             try
             {
@@ -56,7 +58,7 @@ namespace API_REST_EXEMPLO.Services.Implementation
         }
 
         //Metodo para recuperar um registro específico
-        public Person FindById(long Id)
+        public Person FindById(int Id)
         {
             return _context.Persons.SingleOrDefault(p => p.Id.Equals(Id));
         }
@@ -67,21 +69,21 @@ namespace API_REST_EXEMPLO.Services.Implementation
             try
             {
 
-                if (!Exist(person.Id)) return new Person();
+                if (!Exist(person.Id)) return null;
 
                 var result = _context.Persons.SingleOrDefault(p => p.Id.Equals(person.Id));
 
                 _context.Entry(result).CurrentValues.SetValues(person);
                 _context.SaveChanges();
+                return person;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            return person;
         }
 
-        private bool Exist(long? id)
+        public bool Exist(int? id)
         {
             return _context.Persons.Any(p => p.Id.Equals(id));
         }

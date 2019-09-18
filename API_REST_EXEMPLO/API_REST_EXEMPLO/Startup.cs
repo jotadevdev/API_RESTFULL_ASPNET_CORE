@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API_REST_EXEMPLO.Model.Context;
-using API_REST_EXEMPLO.Services;
-using API_REST_EXEMPLO.Services.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -14,29 +12,37 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using API_REST_EXEMPLO.Repository;
+using API_REST_EXEMPLO.Repository.Implementation;
+using API_REST_EXEMPLO.Business;
+using API_REST_EXEMPLO.Business.Implementation;
 
 namespace API_REST_EXEMPLO
 {
     public class Startup
     {
+        //construtor para configurration
+        public IConfiguration _configuration { get; }
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
-            var connection = Configuration["SqlServerConection:SqlServerConectionString"];
-            services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(connection));
+            services.AddApiVersioning();
+
+            //Configuration conection data base
+            var connectionString = _configuration["SqlServerConection:SqlServerConectionString"];
+            services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(connectionString));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             //injeção de dependência
-            services.AddScoped<IPersonService, PersonServiceImpl>();
+            services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
+            services.AddScoped<IPersonRepository, PersonRepositoryImpl>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

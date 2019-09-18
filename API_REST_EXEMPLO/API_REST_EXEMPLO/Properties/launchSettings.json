@@ -9,18 +9,26 @@
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "IIS Express": {
+    "Desenvolvimento - IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/Persons",
+      "launchUrl": "api/Persons/v1",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development" //Manager User Secrets (só eu preciso saber minha senha de user de banco de dados)
+      }
+    },
+    "Teste - IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "api/Persons/v1",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Teste" //appsettings.Teste
       }
     },
     "API_REST_EXEMPLO": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/Person",
+      "launchUrl": "api/Person/v1",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -29,7 +37,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/Persons"
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/Persons/v1"
     }
   }
 }

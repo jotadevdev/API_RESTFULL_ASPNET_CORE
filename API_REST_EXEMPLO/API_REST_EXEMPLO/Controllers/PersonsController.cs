@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API_REST_EXEMPLO.Model;
-using API_REST_EXEMPLO.Services;
+using API_REST_EXEMPLO.Business;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_REST_EXEMPLO.Controllers
 {
-    [Route("api/[controller]")]
+
+    [ApiVersion("1")]
+    [Route("api/[controller]/v{version:ApiVersion}")]
     [ApiController]
     public class PersonsController : ControllerBase
     {
 
-        private IPersonService _personService;
+        private IPersonBusiness _personService;
 
-        public PersonsController(IPersonService personService)
+        public PersonsController(IPersonBusiness personService)
         {
             _personService = personService;
         }
@@ -48,12 +50,14 @@ namespace API_REST_EXEMPLO.Controllers
 
         }
 
-        // PUT api/Persons/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Person person)
+        // PUT api/Persons
+        [HttpPut]
+        public IActionResult Put([FromBody] Person person)
         {
             if (person == null) return BadRequest();
-            return new ObjectResult(_personService.Update(person));
+            var alteraItem = _personService.Update(person);
+            if (person == null) return NoContent();
+            return new ObjectResult(alteraItem);
         }
 
         // DELETE api/Persons/5

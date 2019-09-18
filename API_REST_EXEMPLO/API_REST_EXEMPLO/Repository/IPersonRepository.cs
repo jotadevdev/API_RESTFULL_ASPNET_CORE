@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API_REST_EXEMPLO.Services
+namespace API_REST_EXEMPLO.Repository
 {
-    public interface IPersonService
+    public interface IPersonRepository
     {
         Person Create(Person person);
-        Person FindById(long Id);
+        Person FindById(int Id);
         List<Person> FindAll();
         Person Update(Person person);
-        void Delete(long Id);
+        void Delete(int Id);
+
+        bool Exist(int? id);
     }
 }
