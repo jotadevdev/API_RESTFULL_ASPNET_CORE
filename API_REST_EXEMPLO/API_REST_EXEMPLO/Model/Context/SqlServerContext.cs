@@ -15,13 +15,14 @@ namespace API_REST_EXEMPLO.Model.Context
 
         }
 
-
         public SqlServerContext(DbContextOptions<SqlServerContext> options) : base(options)
         {
 
         }
 
+        public DbSet<Books> Books { get; set; }
         public DbSet<Person> Persons { get; set; }
+        
 
     }
 }

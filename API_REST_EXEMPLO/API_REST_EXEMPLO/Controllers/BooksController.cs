@@ -1,46 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API_REST_EXEMPLO.Business;
+using API_REST_EXEMPLO.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_REST_EXEMPLO.Controllers
 {
-
-    [Route("api/[controller]")]
-    public class BooksController : Controller
+    [ApiVersion("1")]
+    [Route("api/[controller]/v{version:ApiVersion}")]
+    public class BooksController : ControllerBase
     {
+
+        private IBooksBusiness _BookService;
+
+        public BooksController(IBooksBusiness BookService)
+        {
+            _BookService = BookService;
+        }
+
         // api/Books/v1
-        [HttpGet("v1")]
+        [HttpGet]
         public IActionResult Get()
         {
-            return Ok();
+            return Ok(_BookService.FindAll());
         }
 
         // api/Books/v1/5
-        [HttpGet("v1/{id}")]
-        public IActionResult Get(long id)
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
         {
-            return Ok();
+            Books book = _BookService.FindById(id);
+            if (book == null)
+                return NotFound();
+            return Ok(book);
         }
 
         // POST api/Books/v1
-        [HttpPost("v1")]
-        public IActionResult Post([FromBody] Book book)
+        [HttpPost]
+        public IActionResult Post([FromBody] Books book)
         {
-            return Ok();
+            if (book == null) return BadRequest();
+            return Ok(_BookService.Create(book));
 
         }
 
         // PUT api/Books/v1
-        [HttpPut("v1")]
-        public IActionResult Put([FromBody] Book book)
+        [HttpPut]
+        public IActionResult Put([FromBody] Books book)
         {
-            if (person == null) return BadRequest();
-            var alteraItem = _personService.Update(person);
-            if (person == null) return NoContent();
+            if (book == null) return BadRequest();
+            var alteraItem = _BookService.Update(book);
+            if (book == null) return NoContent();
             return new ObjectResult(alteraItem);
         }
 
+        // DELETE api/Persons/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            if (id <= 0) return BadRequest();
+            _BookService.Delete(id);
+
+            //NoContent qdo não retorna nada (204 na tela)
+            return NoContent();
+        }
     }
 }
