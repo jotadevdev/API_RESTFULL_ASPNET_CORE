@@ -1,13 +1,14 @@
-﻿using System;
+﻿using API_REST_EXEMPLO.Model.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace API_REST_EXEMPLO.Model
 {
-    public class Person
+    public class Person: BaseEntity
     {
-        public int? Id { get; set; }
+        //public int? Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Address { get; set; }

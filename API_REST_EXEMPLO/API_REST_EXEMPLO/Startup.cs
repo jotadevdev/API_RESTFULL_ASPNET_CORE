@@ -7,10 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using API_REST_EXEMPLO.Repository;
-using API_REST_EXEMPLO.Repository.Implementation;
+//using API_REST_EXEMPLO.Repository.Generic.Implementation;
 using API_REST_EXEMPLO.Business;
 using API_REST_EXEMPLO.Business.Implementation;
 using API_REST_EXEMPLO.Repository.Generic;
+using Microsoft.Net.Http.Headers;
+using Tapioca.HATEOAS;
+using API_REST_EXEMPLO.Hypermedia;
+using API_REST_EXEMPLO.Repository.Generic.Implementation;
 
 namespace API_REST_EXEMPLO
 {
@@ -33,12 +37,20 @@ namespace API_REST_EXEMPLO
             var connectionString = _configuration["SqlServerConection:SqlServerConectionString"];
             services.AddDbContext<SqlServerContext>(options => options.UseSqlServer(connectionString));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("text/xml"));
+                options.FormatterMappings.SetMediaTypeMappingForFormat("jason", MediaTypeHeaderValue.Parse("application/json"));
+            }).AddXmlSerializerFormatters();
+
+            var filterOptions = new HyperMediaFilterOptions();
+            filterOptions.ObjectContentResponseEnricherList.Add(new PersonEnricher());
+            services.AddSingleton(filterOptions);
+
 
             //injeção de dependência
             services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
-            services.AddScoped<IPersonRepository, PersonRepositoryImpl>();
-
             services.AddScoped<IBooksBusiness, BooksBusinessImpl>();
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepositoryImpl<>));
 
@@ -57,7 +69,12 @@ namespace API_REST_EXEMPLO
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "DefaultApi",
+                    template: "{controller=Values}/{id?}");
+            });
         }
     }
 }

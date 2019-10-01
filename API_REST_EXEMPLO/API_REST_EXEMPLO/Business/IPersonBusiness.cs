@@ -1,4 +1,5 @@
-﻿using API_REST_EXEMPLO.Model;
+﻿using API_REST_EXEMPLO.Data.VO;
+using API_REST_EXEMPLO.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,10 @@ namespace API_REST_EXEMPLO.Business
 {
     public interface IPersonBusiness
     {
-        Person Create(Person person);
-        Person FindById(int Id);
-        List<Person> FindAll();
-        Person Update(Person person);
+        PersonVO Create(PersonVO PersonVO);
+        PersonVO FindById(int Id);
+        List<PersonVO> FindAll();
+        PersonVO Update(PersonVO PersonVO);
         void Delete(int Id);
     }
 }

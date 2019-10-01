@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace API_REST_EXEMPLO.Repository.Generic
+namespace API_REST_EXEMPLO.Repository.Generic.Implementation
 {
     public class GenericRepositoryImpl<T> : IRepository<T> where T : BaseEntity
     {

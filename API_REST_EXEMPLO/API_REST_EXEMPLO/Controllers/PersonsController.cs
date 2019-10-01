@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API_REST_EXEMPLO.Model;
+﻿using Microsoft.AspNetCore.Mvc;
+using API_REST_EXEMPLO.Data.VO;
 using API_REST_EXEMPLO.Business;
-using Microsoft.AspNetCore.Mvc;
+using Tapioca.HATEOAS;
 
 namespace API_REST_EXEMPLO.Controllers
 {
@@ -24,6 +21,7 @@ namespace API_REST_EXEMPLO.Controllers
 
         // GET api/Persons
         [HttpGet]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
             return Ok(_personService.FindAll());
@@ -31,37 +29,41 @@ namespace API_REST_EXEMPLO.Controllers
 
         // GET api/Persons/5
         [HttpGet("{id}")]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(int id)
         {
-            Person person = _personService.FindById(id);
+            PersonVO PersonVO = _personService.FindById(id);
             if (_personService.FindById(id) == null)
             {
                 return NotFound();
             }
-            return Ok(person);
-        }
+            return Ok(PersonVO);
+        }   
 
         // POST api/Persons
         [HttpPost]
-        public IActionResult Post([FromBody] Person person)
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult Post([FromBody] PersonVO PersonVO)
         {
-            if (person == null) return BadRequest();
-            return new ObjectResult(_personService.Create(person));
+            if (PersonVO == null) return BadRequest();
+            return new ObjectResult(_personService.Create(PersonVO));
 
         }
 
         // PUT api/Persons
         [HttpPut]
-        public IActionResult Put([FromBody] Person person)
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult Put([FromBody] PersonVO PersonVO)
         {
-            if (person == null) return BadRequest();
-            var alteraItem = _personService.Update(person);
-            if (person == null) return NoContent();
+            if (PersonVO == null) return BadRequest();
+            var alteraItem = _personService.Update(PersonVO);
+            if (PersonVO == null) return NoContent();
             return new ObjectResult(alteraItem);
         }
 
         // DELETE api/Persons/5
         [HttpDelete("{id}")]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Delete(int id)
         {
             if (id <= 0) return BadRequest();

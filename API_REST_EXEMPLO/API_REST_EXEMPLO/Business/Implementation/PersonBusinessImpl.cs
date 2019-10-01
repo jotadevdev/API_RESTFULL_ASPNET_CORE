@@ -2,25 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using API_REST_EXEMPLO.Data.Converters;
+using API_REST_EXEMPLO.Data.VO;
 using API_REST_EXEMPLO.Model;
-using API_REST_EXEMPLO.Model.Context;
-using API_REST_EXEMPLO.Repository;
+using API_REST_EXEMPLO.Repository.Generic;
 
 namespace API_REST_EXEMPLO.Business.Implementation
 {
     public class PersonBusinessImpl : IPersonBusiness
     {
-        private IPersonRepository _repository;
+        private IRepository<Person> _repository;
 
-        public PersonBusinessImpl (IPersonRepository repository)
+        private PersonConverter _Converter;
+
+        public PersonBusinessImpl (IRepository<Person> repository)
         {
             _repository = repository;
+            _Converter = new PersonConverter();
         }
 
         //Metodo para Inserir um registro
-        public Person Create(Person person)
+        public PersonVO Create(PersonVO PersonVO)
         {
-            return _repository.Create(person);            
+            var person = _Converter.Parse(PersonVO);
+            return _Converter.Parse(_repository.Create(person));            
         }
 
         //Metodo para remover
@@ -30,21 +35,22 @@ namespace API_REST_EXEMPLO.Business.Implementation
         }
 
         //Metodo para trazer todos os registros
-        public List<Person> FindAll()
+        public List<PersonVO> FindAll()
         {
-            return _repository.FindAll();
+            return _Converter.PaserList(_repository.FindAll());
         }
 
         //Metodo para recuperar um registro específico
-        public Person FindById(int Id)
+        public PersonVO FindById(int Id)
         {
-            return _repository.FindById(Id);
+            return _Converter.Parse(_repository.FindById(Id));
         }
 
         //Metodo para atualizar a tabela
-        public Person Update(Person person)
+        public PersonVO Update(PersonVO PersonVO)
         {
-            return _repository.Update(person);
+            var person = _Converter.Parse(PersonVO);
+            return _Converter.Parse(_repository.Update(person));
         }
 
     }
