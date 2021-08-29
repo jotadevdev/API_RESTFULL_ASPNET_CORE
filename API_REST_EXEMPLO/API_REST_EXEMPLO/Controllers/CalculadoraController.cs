@@ -11,7 +11,7 @@ namespace API_REST_EXEMPLO.Controllers
     public class CalculadoraController : ControllerBase
     {
 
-        // GET api/Calculadora/Somar/5/5 --teste
+        // GET api/Calculadora/Somar/5/5
         [HttpGet("Somar/{priNumero}/{segNumero}")]
         public ActionResult<string> Somar(string priNumero, string segNumero)
         {
